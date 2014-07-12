@@ -157,6 +157,8 @@ char * camera_fixup_setparams(struct camera_device * device, const char * settin
     const char* camMode = params.get(KEY_SAMSUNG_CAMERA_MODE);
 
     bool enableZSL = !strcmp(params.get(android::CameraParameters::KEY_ZSL), "on");
+
+    // jactive device camera don't seem to have recording hint param, so read it safely
     const char* recordingHint = params.get(android::CameraParameters::KEY_RECORDING_HINT);
     bool isVideo = false;
     if (recordingHint)
@@ -457,7 +459,7 @@ int camera_set_parameters(struct camera_device * device, const char *params)
         return -EINVAL;
 
     char *tmp = NULL;
-    __android_log_write(ANDROID_LOG_VERBOSE, LOG_TAG, params);
+    //__android_log_write(ANDROID_LOG_VERBOSE, LOG_TAG, params);
     tmp = camera_fixup_setparams(device, params);
 
 #ifdef LOG_PARAMETERS
