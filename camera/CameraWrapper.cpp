@@ -125,6 +125,9 @@ static char * camera_fixup_getparams(int id, const char * settings)
     params.set(android::CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO, "1920x1080");
 #endif
 
+    /* Enforce video-snapshot-supported to true */
+    params.set(android::CameraParameters::KEY_VIDEO_SNAPSHOT_SUPPORTED, "true");
+
 #ifdef DISABLE_FACE_DETECTION
 #ifndef DISABLE_FACE_DETECTION_BOTH_CAMERAS
     /* Disable face detection for front facing camera */
@@ -155,6 +158,8 @@ char * camera_fixup_setparams(struct camera_device * device, const char * settin
     params.unflatten(android::String8(settings));
     const char KEY_SAMSUNG_CAMERA_MODE[] = "cam_mode";
     const char* camMode = params.get(KEY_SAMSUNG_CAMERA_MODE);
+    if (!camMode)
+        camMode = "0";
 
     bool enableZSL = !strcmp(params.get(android::CameraParameters::KEY_ZSL), "on");
 
@@ -169,6 +174,8 @@ char * camera_fixup_setparams(struct camera_device * device, const char * settin
 #ifdef QCOM_HARDWARE
     if(params.get("iso")) {
         const char* isoMode = params.get(android::CameraParameters::KEY_ISO_MODE);
+        if(!isoMode)
+            params.set(android::CameraParameters::KEY_ISO_MODE, "auto");
         if(strcmp(isoMode, "ISO100") == 0)
             params.set(android::CameraParameters::KEY_ISO_MODE, "100");
         else if(strcmp(isoMode, "ISO200") == 0)
